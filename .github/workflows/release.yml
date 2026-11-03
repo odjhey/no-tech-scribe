@@ -44,11 +44,12 @@ jobs:
           Give your harness this link:
 
           \`\`\`
-          $base/download/$TAG/no-tech-scribe.txt
+          $base/download/$TAG/no-tech-scribe-$TAG.txt
           \`\`\`
 
-          Example prompt: *Read $base/download/$TAG/no-tech-scribe.txt and follow it as your working instructions for this session.*
+          Example prompt: *Read $base/download/$TAG/no-tech-scribe-$TAG.txt and follow it as your working instructions for this session.*
 
+          - Same content without the version in the file name: $base/download/$TAG/no-tech-scribe.txt
           - Same content as Markdown: $base/download/$TAG/no-tech-scribe.md
           - Same content as plain text from the tag: $raw
           - Always the newest stable version: $base/latest/download/no-tech-scribe.txt
@@ -56,7 +57,7 @@ jobs:
 
           NOTES
 
-          gh release create "$TAG" dist/no-tech-scribe.txt dist/no-tech-scribe.md dist/SHA256SUMS \
+          gh release create "$TAG" "dist/no-tech-scribe-$TAG.txt" dist/no-tech-scribe.txt dist/no-tech-scribe.md dist/SHA256SUMS \
             --verify-tag \
             --title "no-tech-scribe $TAG" \
             --notes-file notes.md \

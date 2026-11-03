@@ -26,14 +26,16 @@ mkdir dist
 # Keep the title, then add a plain version line so transcripts show what was loaded.
 {
   head -n 1 "$src"
-  printf '\nVersion: %s (https://github.com/%s/releases/tag/%s)\n' "$tag" "$repo" "$tag"
+  printf '\nVersion: %s (https://github.com/%s/releases/tag/%s). Newest version: https://github.com/%s/releases/latest\n' "$tag" "$repo" "$tag" "$repo"
   tail -n +2 "$src"
 } > "dist/$asset"
 
-# Same content as .txt for people who do not know .md files.
+# Same content as .txt for people who do not know .md files. The fixed name
+# serves the "latest" link; the versioned name keeps the version in downloads.
 cp "dist/$asset" dist/no-tech-scribe.txt
+cp "dist/$asset" "dist/no-tech-scribe-$tag.txt"
 
-(cd dist && shasum -a 256 "$asset" no-tech-scribe.txt > SHA256SUMS)
+(cd dist && shasum -a 256 "no-tech-scribe-$tag.txt" no-tech-scribe.txt "$asset" > SHA256SUMS)
 
-echo "built dist/$asset and dist/no-tech-scribe.txt for $tag"
+echo "built dist/ for $tag"
 cat dist/SHA256SUMS
