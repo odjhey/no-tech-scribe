@@ -1,0 +1,17 @@
+name: Check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  rule-ids:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # the check reads every released tag
+
+      - name: Check rule IDs against released versions
+        run: python3 scripts/check-ids.py

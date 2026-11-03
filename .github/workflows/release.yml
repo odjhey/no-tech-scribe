@@ -1,0 +1,65 @@
+name: Release
+
+# Push a version tag (v1.2.3, or v1.2.3-rc.1 for a prerelease) to publish.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # the ID check reads every released tag
+
+      - name: Check rule IDs against released versions
+        run: python3 scripts/check-ids.py --exclude "$GITHUB_REF_NAME"
+
+      - name: Build release assets
+        run: sh scripts/build.sh "$GITHUB_REF_NAME"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # A published version link must never change. Cut a new version instead.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists. Tag a new version instead."
+            exit 1
+          fi
+
+          flags=""
+          case "$TAG" in *-*) flags="--prerelease" ;; esac
+
+          base="https://github.com/$GITHUB_REPOSITORY/releases"
+          raw="https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$TAG/src/no-tech-scribe.md"
+          sum="$(cut -d' ' -f1 dist/SHA256SUMS)"
+
+          cat > notes.md <<NOTES
+          ## Use this version
+
+          Give your harness this link:
+
+          \`\`\`
+          $base/download/$TAG/no-tech-scribe.md
+          \`\`\`
+
+          Example prompt: *Read $base/download/$TAG/no-tech-scribe.md and follow it as your working instructions for this session.*
+
+          - Same content as plain text from the tag: $raw
+          - Always the newest stable version: $base/latest/download/no-tech-scribe.md
+          - SHA-256 of \`no-tech-scribe.md\`: \`$sum\`
+
+          NOTES
+
+          gh release create "$TAG" dist/no-tech-scribe.md dist/SHA256SUMS \
+            --verify-tag \
+            --title "no-tech-scribe $TAG" \
+            --notes-file notes.md \
+            --generate-notes \
+            $flags
