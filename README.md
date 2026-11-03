@@ -6,7 +6,7 @@ Working rules for AI coding agents whose operator is new to programming or new t
 
 Give your agent the link from the [latest release](https://github.com/odjhey/no-tech-scribe/releases/latest), for example:
 
-> Read https://github.com/odjhey/no-tech-scribe/releases/latest/download/no-tech-scribe.md and follow it as your working instructions for this session.
+> Read https://github.com/odjhey/no-tech-scribe/releases/latest/download/no-tech-scribe.txt and follow it as your working instructions for this session.
 
 To pin one version, use the version link from that release's notes.
 

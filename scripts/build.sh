@@ -30,7 +30,10 @@ mkdir dist
   tail -n +2 "$src"
 } > "dist/$asset"
 
-(cd dist && shasum -a 256 "$asset" > SHA256SUMS)
+# Same content as .txt for people who do not know .md files.
+cp "dist/$asset" dist/no-tech-scribe.txt
 
-echo "built dist/$asset for $tag"
+(cd dist && shasum -a 256 "$asset" no-tech-scribe.txt > SHA256SUMS)
+
+echo "built dist/$asset and dist/no-tech-scribe.txt for $tag"
 cat dist/SHA256SUMS
